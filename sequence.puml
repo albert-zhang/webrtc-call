@@ -1,0 +1,73 @@
+@startuml webrtc
+
+actor Peer1
+actor Peer2
+actor Server
+
+== init ==
+
+Peer1 -> Peer1: getUserMedia
+Peer1 -> Peer1: new RTCPeerConnection()
+Peer1 -> Peer1: addTracks
+
+== init ==
+
+Peer2 -> Peer2: getUserMedia
+Peer2 -> Peer2: new RTCPeerConnection()
+Peer2 -> Peer2: addTracks
+
+== join ==
+
+Peer1 -> Server: join
+Server -> Peer1: host
+
+Peer2 -> Server: join
+Server -> Peer2: guest
+
+Server -> Peer1: ready
+Server -> Peer2: ready
+
+== p2p ==
+
+Peer1 -> Peer1: createOffer
+Peer1 -> Peer1: setLocalDescription by offer
+Peer1 -> Peer2: offer
+Peer2 -> Peer2: setRemoteDescription by offer
+Peer2 -> Peer2: createAnswer
+Peer2 -> Peer2: setLocalDescription by answer
+Peer2 -> Peer1: answer
+Peer1 -> Peer1: setRemoteDescription by answer
+
+== event: candidate ==
+
+Peer1 -> Peer2: candidate (onicecandidate)
+Peer2 -> Peer2: addIceCandidate
+
+Peer2 -> Peer1: candidate (onicecandidate)
+Peer1 -> Peer1: addIceCandidate
+
+== event: addstream ==
+
+Peer1 -> Peer1: set remote srcObject (onaddstream)
+Peer2 -> Peer2: set remote srcObject (onaddstream)
+
+== event: datachannel ==
+
+Peer2 -> Peer2: ondatachannel: get data channel, listen onopen/onclose
+
+== datachanel ==
+
+Peer1 -> Peer2: message
+Peer2 -> Peer2: handle message
+Peer2 -> Peer1: message
+Peer1 -> Peer1: handle message
+
+== bye ==
+
+Peer1 -> Server: bye
+Server -> Peer1: bye
+Peer1 -> Peer1: destroy
+Server -> Peer2: bye
+Peer2 -> Peer2: destroy
+
+@enduml
