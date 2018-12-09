@@ -188,7 +188,15 @@ new Vue({
         video: true
       });
       this.$refs.localVideo.srcObject = localStream;
-      peerConn = new RTCPeerConnection();
+      peerConn = new RTCPeerConnection({
+        iceServers: [
+          {
+            urls: 'turn:144.34.206.188',
+            credential: 'hello',
+            username: 'hello',
+          }
+        ],
+      });
       localStream.getTracks().forEach(track => {
         peerConn.addTrack(track, localStream);
       });
