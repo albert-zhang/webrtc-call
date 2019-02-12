@@ -51,7 +51,7 @@ new Vue({
       this.logTxt += str + '\n';
     },
     connect() {
-      let server = 'https://zytest2.mxj.mx';
+      let server = '/';
       let options = {
         path: '/socketproxy/socket.io',
       };
